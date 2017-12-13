@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+       #map {
+        height: 700px;
+        width: 100%;
+       }
+    </style>
+  </head>
+  <body>
+    <h3>post-gas-map</h3>
+    <div id="map"></div>
+	
+	<script>
+	  var map;
+    var infowindow;
+	  
+      function initMap() {
+        var FCU = {lat: 24.179340, lng: 120.649407};
+		
+        map = new 
+          google.maps.Map(document.getElementById('map'), {
+            zoom: 15,
+            center: FCU
+          });
+		infowindow = new google.maps.InfoWindow();
+		
+		var post_office_request = {
+		  query: '西屯區 郵局'
+		};
+		
+		var GAS_request = {
+		  query: '西屯區 加油站'
+		};
+		
+		service = new google.maps.places.PlacesService(map);
+		service.textSearch(post_office_request, post_office_callback);
+		service.textSearch(GAS_request, GAS_callback);
+      }
+	  
+	  function post_office_callback(results, status) {
+		if (status == google.maps.places.PlacesServiceStatus.OK) {
+		  for (var i = 0; i < results.length; i++) {
+			var place = results[i];
+			createMarker(results[i]);
+		  }
+		}
+	  }
+	  
+	  function GAS_callback(results, status) {
+		if (status == google.maps.places.PlacesServiceStatus.OK) {
+		  for (var i = 0; i < results.length; i++) {
+			var place = results[i];
+			createGASMarker(results[i]);
+		  }
+		}
+	  }
+      
+	  function createMarker(place) {
+        var placeLoc = place.geometry.location;
+        var marker = new google.maps.Marker({
+          map: map,
+          position: placeLoc,
+		  icon: 'https://cdn2.iconfinder.com/data/icons/maki/100/post-32.png'
+        });
+
+        google.maps.event.addListener(marker, 'mouseover', function() {
+          infowindow.setContent(place.formatted_address);
+          infowindow.open(map, this);
+        });
+		
+		google.maps.event.addListener(marker, 'mouseout', function() {
+          infowindow.close();
+        });
+	  }
+	  
+	  function createGASMarker(place) {
+        var placeLoc = place.geometry.location;
+        var marker = new google.maps.Marker({
+          map: map,
+          position: placeLoc,
+		  icon: 'https://cdn3.iconfinder.com/data/icons/wpzoom-developer-icon-set/500/132-32.png'
+        });
+
+        google.maps.event.addListener(marker, 'mouseover', function() {
+          infowindow.setContent(place.formatted_address);
+          infowindow.open(map, this);
+        });
+		
+		google.maps.event.addListener(marker, 'mouseout', function() {
+          infowindow.close();
+        });
+	  }
+
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGLlYn0eiq26qvRvpcWqCNUUWjXW1lBq8&libraries=places&callback=initMap" async defer></script>
+  </body>
+</html>
